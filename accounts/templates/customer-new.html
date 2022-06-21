@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Create New Customer</h1>
+</div>
+<form method="POST" novalidate>
+    {% csrf_token %}
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Customer's Name and Company Name</h6>
+            </div>
+            <div class="card-body">
+                <div class="card-body row py-0">
+                    <p class="col-lg-12 sm-12">
+                        {{form.company_name.label}}
+                        {{form.company_name}}
+                        <span class="text-danger">{{form.company_name.errors|striptags}}</span>
+                    </p>
+                    <p class="col-lg-12 sm-12">
+                        {{form.first_name.label}}
+                        {{form.first_name}}
+                        <span class="text-danger">{{form.first_name.errors|striptags}}</span>
+                    </p>
+                    <p class="col-lg-12 sm-12">
+                        {{form.last_name.label}}
+                        {{form.last_name}}
+                        <span class="text-danger">{{form.last_name.errors|striptags}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% comment %} contact details {% endcomment %}
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6  class="m-0 font-weight-bold text-primary">Contact Details</h6>
+            </div>
+            <div class="card-body">
+                <div class="card-body row py-0">
+                    <p class="col-lg-12 sm-12">
+                        {{form.phone.label}}
+                        {{form.phone}}
+                        <span class="text-danger">{{form.phone.errors|striptags}}</span>
+                    </p>
+
+                    <p class="col-lg-12 sm-12">
+                        {{form.email.label}}
+                        {{form.email}}
+                        <span class="text-danger">{{form.email.errors|striptags}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% comment %} address {% endcomment %}
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Address</h6>
+            </div>
+            <div class="card-body">
+                <div class="card-body row py-0">
+                    <p class="col-lg-12 sm-12">
+                        {{form.address_1.label}}
+                        {{form.address_1}}
+                        <span class="text-danger">{{form.address_1.errors|striptags}}</span>
+                    </p>
+                    <p class="col-lg-12 sm-12">
+                        {{form.address_2.label}}
+                        {{form.address_2}}
+                        <span class="text-danger">{{form.address_2.errors|striptags}}</span>
+                    </p>
+                    <p class="col-lg-12 sm-12">
+                        {{form.city.label}}
+                        {{form.city}}
+                        <span class="text-danger">{{form.city.errors|striptags}}</span>
+                    </p>
+                    <p class="col-lg-12 sm-12">
+                        {{form.post_code.label}}
+                        {{form.post_code}}
+                        <span class="text-danger">{{form.post_code.errors|striptags}}</span>
+                    </p>
+                    <p class="col-lg-12 sm-12">
+                        {{form.country.label}}
+                        {{form.country}}
+                        <span class="text-danger">{{form.country.errors|striptags}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="card mb-4 py-3">
+            <div class="card-body mx-auto d-sm-inline-block text-center">
+                <a href="{% url 'customers-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                    <i class="fas fa-times fa-sm text-white-50"> </i> Cancel
+                </a>
+                <button type='submit' class="btn btn-md btn-primary shadow-sm m-1">
+                    <i class="fas fa-save fa-sm text-white-50"> </i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock content %}

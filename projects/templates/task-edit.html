@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><strong>Edit: </strong> {{task.name}}</h1>
+</div>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Task Detail</h6>
+            </div>
+            <div class="card-body row">
+    
+                <p class="col-lg-6 sm-12">
+                    <label for="task-name">Project</label>
+                    <input type="text" class="form-control" value="{{task.job_id.project_id}}" disabled>
+                </p>
+                <p class="col-lg-6 sm-12">
+                    <label for="task-name">Job</label>
+                    <input type="text" class="form-control" name="" value="{{task.job_id.name}}" disabled>
+                    <span hidden>{{form.job_id}}</span>
+                </p>
+                <p class="col-lg-12 sm-12">
+                    <label for="task-name">Task Name</label>
+                    {{form.name}}
+                    {{form.name.errors}}
+                </p>
+                <p class="col-lg-6 sm-12">
+                    <span hidden>{{form.completed}}</span>
+                    {{form.completed_date.label}}
+                    {{form.completed_date}}
+                    <span id="todayButton" class="btn btn-sm btn-success shadow-sm mt-2">
+                        <i class="fas fa-calendar fa-sm text-white-50"> </i> Today
+                    </span>
+                    
+                </p>
+                {{form.completed_date.errors}}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card mb-4 py-3">
+            <div class="card-body mx-auto d-sm-inline-block text-center">
+                <a href="{% url 'task-view' task.id %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                    <i class="fas fa-times fa-sm text-white-50"> </i> Cancel
+                </a>
+                <button type='submit' class="btn btn-md btn-primary shadow-sm m-1">
+                    <i class="fas fa-save fa-sm text-white-50"> </i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+{% block script %}
+<script>
+    todayButton = document.getElementById('todayButton');
+    completedDate = document.getElementById('id_completed_date');
+
+    todayButton.addEventListener('click', (e)=>{
+        today = new Date();
+        day = ("0" + today.getDate()).slice(-2)
+        month = ("0" + today.getMonth()).slice(-2);
+        year = today.getFullYear();
+        completedDate.value = `${year}-${month}-${day}`;
+    });
+
+</script>
+{% endblock script %}
+
+
+{% endblock content %}

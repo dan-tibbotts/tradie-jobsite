@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load projects_tags %}
+{% load accounts_tags %}
+
+{% block content %}
+{% get_open_projects as open_projects %}
+{% get_all_user_jobs user as user_jobs %}
+{% get_work_images work as work_images %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><strong>Edit: </strong> {{work.descrip}}</h1>
+</div>
+<form method="POST" novalidate enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Staff Member</h6>
+            </div>
+            <div class="card-body row">
+                <p class="col-lg-12 sm-12">
+                    {{form.staff_id.label}}
+                    <input type="text" class="form-control" id="" name="staff" value="{{work.staff_id.first_name}} {{work.staff_id.last_name}}" disabled>
+                    <span hidden>{{form.staff_id}}</span>
+                    <span class="text-danger">{{form.staff_id.errors|striptags}}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Project/Job Information</h6>
+            </div>
+            <div class="card-body">
+                {{form.job_id.label}}
+                {{form.job_id}}
+                <span class="text-danger">{{form.job_id.errors|striptags}}</span>
+        </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Description of Works</h6>
+            </div>
+            <div class="card-body row">
+                <p class="col-lg-12 sm-12">
+                    {{form.description}}
+                    <span class="text-danger">{{form.description.errors|striptags}}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Attached Photographs</h6>
+            </div>
+            <div class="card-body row mx-2 justify-content-center">
+                {% for image in work_images %}
+                <span class="image-span">
+                    <a href="" data-toggle="modal" onclick="imageClicked( `{{image.image.url}}` )" data-target="#imageModal"><img class="tradie-images" src="{{image.image.url}}">
+                    </a>
+                    <a href="{% url 'delete-image' image.id %}" class="text-dark mr-4"><i class="fas fa-trash-alt image-trash"></i></a>
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Upload Photographic Evidence</h6>
+            </div>
+            <div class="card-body row mx-3">
+                <input class="" type="file" name="images" accept="image/*" multiple>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Date of works</h6>
+            </div>
+            <div class="card-body row">
+                <p class="col-lg-6 sm-12">
+                    {{form.start_datetime.label}}
+                    <input type="datetime-local" name="start_datetime" value="{{work.start_datetime|date:'Y-m-d'}}T{{work.start_datetime|date:'G:i:s'}}" class="form-control form-control-user" placeholder="" id="id_start_datetime" required>
+                    <span class="text-danger">{{form.start_datetime.errors|striptags}}</span>
+
+                </p>
+                <p class="col-lg-6 sm-12">
+                    {{form.end_datetime.label}}
+                    <input type="datetime-local" name="end_datetime" value="{{work.end_datetime|date:'Y-m-d'}}T{{work.end_datetime|date:'G:i:s'}}" class="form-control form-control-user" placeholder="" id="id_end_datetime" required>
+                    <span class="text-danger">{{form.end_datetime.errors|striptags}}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card mb-4 py-3">
+            <div class="card-body mx-auto d-sm-inline-block text-center m-1">
+                <a href="{% url 'work-view' work.id %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                    <i class="fas fa-times fa-sm text-white-50"> </i> Cancel
+                </a>
+                <button type='submit' class="btn btn-md btn-primary shadow-sm m-1">
+                    <i class="fas fa-save fa-sm text-white-50"> </i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}

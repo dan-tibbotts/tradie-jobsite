@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load accounts_tags %}
+{% load projects_tags %}
+
+{% block content %}
+
+{% is_only_trade_staff user as only_trade_staff %}
+{% get_total_work_hours_by_job job as total_work_hours %}
+{% get_work_by_job job as job_work_records %}
+{% get_job_images job as job_images %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <span class="h3 mb-0 text-gray-800"><strong>Job: </strong> {{job.name}} - ({{job.project_id.name}})</span>
+    {% if job.completed %}
+        <span class="h3 mr-3 text-success text-right"><strong>Completed</strong></span>
+    {% else %}
+        <span class="h3 mr-3 text-danger text-right"><strong>Uncompleted</strong></span>
+    {% endif %}
+
+</div>
+
+
+<!-- Cards Row -->
+<div class="row col-lg-12 p-0">
+
+    <!-- Total Work Hours -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total Work Hours</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{total_work_hours}}</div>
+                    </div>
+                    <div class="col-auto text-gray-300" >
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div> 
+<!-- End Cards Row -->
+
+
+<!-- Job Tabs -->
+<ul class="nav nav-pills mb-4 border rounded bg-white p-2" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Job Information</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="tasks-tab" data-toggle="tab" href="#tasks" role="tab" aria-controls="tasks" aria-selected="true">Tasks</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="works-tab" data-toggle="tab" href="#works" role="tab" aria-controls="works" aria-selected="false">Works</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="photos-tab" data-toggle="tab" href="#photos" role="tab" aria-controls="photos" aria-selected="false">Photos</a>
+    </li>
+</ul>
+
+<!-- Start Tabs -->
+<div class="tab-content" id="myTabContent">
+
+    <!-- Project Information -->
+    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Job/Project Information</h6>
+                </div>
+                <div class="card-body row">
+                    <p class="col-lg-6 sm-12">
+                        <label for="id_job_name">Job Name</label>
+                        <input type="text" class="form-control" name="id_job_name" value="{{job.name}}" disabled>
+                    </p>
+
+                    <p class="col-lg-6 sm-12">
+                        <label for="project-name">Project Name</label>
+                        <input type="text" class="form-control" name="customer_name" value="{{job.project_id.get_project_id}} - {{job.project_id.name}}" disabled>
+                    </p>
+
+                    <p class="col-lg-6 sm-12">
+                        <label for="customer-name">Customer</label>
+                        <input type="text" class="form-control" name="customer" value="{{job.project_id.customer_id.get_customer_name}}" disabled>
+                    </p>
+
+                    <p class="col-lg-2 sm-12">
+                        <label for="job-completed">Completed</label>
+                        {% if job.completed %}
+                            <input type="text" class="form-control" name="job-completed" value="Yes" disabled>
+                        {% else %}
+                            <input type="text" class="form-control" name="job-completed" value="No" disabled>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Job Description</h6>
+                </div>
+                <div class="card-body row"> 
+                    <p class="col-lg-12 sm-12">
+                        <textarea class="form-control" name="description" disabled>{{job.description}}</textarea>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Assigned Staff</h6>
+                </div>
+                <div class="card-body row ml-2">
+                    {% for staff in job.staff_id.all %}
+                        {% if forloop.first %}
+                            <span>{{staff.first_name}} {{staff.last_name}}</span>
+                        {% else %}
+                            <span>, &nbsp;{{staff.first_name}} {{staff.last_name}}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Scheduling information</h6>
+                </div>
+                <div class="card-body row">
+                    <p class="col-lg-6 sm-12">
+                        <label for="job-start-date">Start Date</label>
+                        <input type="text" class="form-control" name="job-start-date" value="{{job.start_date|default_if_none:""}}" disabled>
+                    </p>
+                    <p class="col-lg-6 sm-12">
+                        <label for="job-end-date">Schedulded End Date</label>
+                        <input type="text" class="form-control" name="job-end-date" value="{{job.end_date|default_if_none:""}}" disabled>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- End Project Information -->
+
+    <!-- Tasks -->
+    <div class="tab-pane fade" id="tasks" role="tabpanel" aria-labelledby="tasks-tab">
+        <!-- Tasks -->
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Tasks assigned to this Job</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Task Name</th>
+                                <th>Project</th>
+                                <th class="d-none d-md-table-cell">Completed Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in job.job_tasks.all %}
+                            <tr>
+                                <td><strong><a href="{% url 'task-view' task.id %}">{{task.name}}</a><strong></td>
+                                <td>{{task.job_id.project_id.name}}</td>
+                                <td class="d-none d-md-table-cell">{{task.completed_date|default_if_none:''}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Works -->
+    <div class="tab-pane fade" id="works" role="tabpanel" aria-labelledby="works-tab">
+        <!-- Work Records -->
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Work Records for this Job</h6>
+                </div>
+                <div class="card-body">
+                <p>Showing all works completed for {{job.name}}</p><br>
+                    <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>View</th>
+                                <th class="d-none d-md-table-cell">Staff Member</th>
+                                <th>Description of Works</th>
+                                <th class="d-none d-md-table-cell">Start Datetime</th>
+                                <th class="d-none d-md-table-cell">End Datetime</th>
+                                <th class="d-none d-md-table-cell">Total Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for work in job_work_records %}
+                            <tr>
+                                <td class="text-center">
+                                    <a href="{% url 'work-view' work.id %}" class="btn btn-sm btn-primary shadow-sm">
+                                        <i class="fas fa-eye fa-sm text-white-50"> </i>
+                                    </a>
+                                </td>
+                                <td class="d-none d-md-table-cell">
+                                    {{work.staff_id.first_name|title}} 
+                                    {{work.staff_id.last_name|title}}
+                                </td>
+                                <td>{{work.description|truncatechars:60}}</td>
+                                <td class="d-none d-md-table-cell">{{work.start_datetime}}</td>
+                                <td class="d-none d-md-table-cell">{{work.end_datetime}}</td>
+                                <td class="d-none d-md-table-cell">{{work.get_total_time}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Works-->
+
+    <!-- Photos -->
+    <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
+        <!-- Images -->
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Attached Photographs</h6>
+                </div>
+                <div class="card-body row mx-2 justify-content-center">
+                    {% if job_images %}
+                        {% for image in job_images %}
+                            <a href="" data-toggle="modal" onclick="imageClicked( `{{image.image.url}}` )" data-target="#imageModal"><img class="tradie-images" src="{{image.image.url}}"></a>
+                        {% endfor %}
+                    {% else %}
+                        <p>There are no images uploaded for this job</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Photos -->
+
+</div>
+<!-- End Tabs -->
+
+
+<div class="col-lg-12 p-0">
+    <div class="card mb-4 py-3">
+        <div class="card-body mx-auto d-sm-inline-block text-center">
+            <a href="{% url 'jobs-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                <i class="fas fa-users fa-sm text-white-50"> </i> View All Jobs
+            </a>
+
+            <a href="{% url 'job-edit' job.id %}" class="btn btn-md btn-primary shadow-sm m-1">
+                <i class="fas fa-user-edit fa-sm text-white-50"> </i> Edit Job
+            </a>
+                <a href="{% url 'job-delete' job.id %}" class="btn btn-md btn-danger shadow-sm m-1">
+                    <i class="fas fa-trash fa-sm text-white-50"> </i> Delete Job
+                </a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

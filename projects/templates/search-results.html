@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if staffs or customers or works or projects or tasks or jobs %}
+{% comment %} Nav Section {% endcomment %}
+    <div class="card shadow mb-4 ">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Jump To: </h6>
+            <div class="card-body mx-auto d-sm-inline-block">
+                {% if staffs %}
+                    <a href="#staffs" class="btn btn-sm btn-primary shadow-sm m-1">
+                        <i class="fas fa-fw fa-users text-white-50"> </i> Staff
+                    </a>
+                {% endif %}
+                {% if customers %}
+                    <a href="#customers" class="btn btn-sm btn-primary shadow-sm m-1">
+                        <i class="fas fa-fw fa-building text-white-50"> </i> Customers
+                    </a>                
+                {% endif %}
+                {% if projects %}
+                    <a href="#projects" class="btn btn-sm btn-primary shadow-sm m-1">
+                        <i class="fas fa-fw fa-briefcase text-white-50"> </i> Projects
+                    </a>
+                {% endif %}
+                {% if jobs %}
+                    <a href="#jobs" class="btn btn-sm btn-primary shadow-sm m-1">
+                        <i class="fas fa-fw fa-toolbox text-white-50"> </i> Jobs
+                    </a>
+                {% endif %}
+                {% if tasks %}
+                    <a href="#tasks" class="btn btn-sm btn-primary shadow-sm m-1">
+                        <i class="fas fa-fw fa-tasks text-white-50"> </i> Tasks
+                    </a>
+                {% endif %}
+                {% if works %}
+                    <a href="#works" class="btn btn-sm btn-primary shadow-sm m-1">
+                        <i class="fas fa-fw fa-tasks text-white-50"> </i> Work Records
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% comment %} Customer Section {% endcomment %}
+    {% if customers %}
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 id="customers" class="m-0 font-weight-bold text-primary">Customers Results</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th class="d-none d-lg-table-cell">Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <td><a href="{% url 'customer-view' customer.id %}">{{customer.get_customer_name}}<a/></td>
+                            <td>{{customer.phone}}</td>
+                            <td class="d-none d-lg-table-cell">{{customer.email}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    {% comment %} Staff Section {% endcomment %}
+    {% if staffs %}
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 id="staffs" class="m-0 font-weight-bold text-primary">Staff Results</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="d-none d-lg-table-cell">Username</th>
+                            <th class="d-none d-md-table-cell">Groups</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for staff in staffs %}
+                        <tr>
+                            <td><strong><a href="{% url 'staff-view' staff.id %}">{{staff.first_name}} {{staff.last_name}}<a/></strong></td>
+                            <td class="d-none d-lg-table-cell">{{staff.username}}</td>
+                            <td class="d-none d-lg-table-cell">{{staff.groups.all|join:', '}}</td>
+                            <td>{{staff.email}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    {% comment %} Project Section {% endcomment %}
+    {% if projects %}
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 id="projects" class="m-0 font-weight-bold text-primary">Project Results</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                            <th class="d-none d-lg-table-cell">Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in projects %}
+                        <tr>
+                            <td><strong><a href="{% url 'project-view' project.id %}">{{project.get_project_id}}:<strong> {{project.name}}</a></td>
+                            <td><a href="{% url 'customer-view' project.customer_id.id %}">{{project.customer_id.get_customer_name}}</a></td>
+                            <td>{{project.get_status_display}}</td>
+                            <td class="d-none d-lg-table-cell">{{project.location}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    {% comment %} Job Section {% endcomment %}
+    {% if jobs %}
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 id="jobs" class="m-0 font-weight-bold text-primary">Job Results</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Job</th>
+                            <th>Assigned Project</th>
+                            <th class="d-none d-lg-table-cell">Assigned Staff</th>
+                            <th class="d-none d-lg-table-cell">Start Date</th>
+                            <th class="d-none d-lg-table-cell">End Date</th>
+                            <th class="text-center"><i class="fas fa-clipboard-check"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for job in jobs %}
+                        <tr class="{% if job.is_overdue %}
+                                        bg-danger-row
+                                    {% elif job.completed %}
+                                        bg-completed-row
+                                    {% endif %}">
+                            <td>
+                                <strong><a href="{% url 'job-view' job.id %}">{{job.name|default_if_none:""}}</a></strong>
+                                <p><small>{{job.description|truncatechars:50}}<small></p>
+                            </td>
+                            <td>
+                                <a href="{% url 'project-view' job.project_id.id %}">{{job.project_id.name}}</a>
+                                <p><small>{{job.project_id.customer_id.get_customer_name}}</small></p>
+                            </td>
+                            <td class="d-none d-lg-table-cell">
+                                {% for staff in job.staff_id.all %}
+                                    {% if forloop.last %}
+                                        <span>{{staff.first_name|title}} {{staff.last_name|title}}</span>
+                                    {% else %}
+                                        <span>{{staff.first_name|title}} {{staff.last_name|title}}, </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="d-none d-lg-table-cell">{{job.start_date|default_if_none:""}}</td>
+                            <td class="d-none d-lg-table-cell">{{job.end_date|default_if_none:""}}</td>
+                            <td class="text-center">{{job.completed|yesno:"Yes,No"}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    {% comment %} Task Section {% endcomment %}
+    {% if tasks %}
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 id="tasks" class="m-0 font-weight-bold text-primary">Task Results</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th class="d-none d-lg-table-cell">Project</th>
+                            <th>Job</th>
+                            <th class="d-none d-lg-table-cell">Completed Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <td><strong><a href="{% url 'task-view' task.id %}">{{task.name}}</a><strong></td>
+                            <td class="d-none d-lg-table-cell">{{task.job_id.project_id.name}}</td>
+                            <td>{{task.job_id.name}}</td>
+                            <td class="d-none d-lg-table-cell">{{task.completed_date}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    {% comment %} Work Section {% endcomment %}
+    {% if works %}
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 id="works" class="m-0 font-weight-bold text-primary">Work Record Results</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>View</th>
+                            <th class="d-none d-md-table-cell">Staff Member</th>
+                            <th>Job</th>
+                            <th>Description of Works</th>
+                            <th class="d-none d-lg-table-cell">Start Datetime</th>
+                            <th class="d-none d-lg-table-cell">End Datetime</th>
+                            <th class="d-none d-lg-table-cell">Total Time</th>
+                        </tr>
+                    </thead>    
+                    <tbody>
+                        {% for work in works %}
+                        <tr>
+                            <td class="text-center">
+                                <a href="{% url 'work-view' work.id %}" class="btn btn-sm btn-primary shadow-sm">
+                                    <i class="fas fa-eye fa-sm text-white-50"> </i>
+                                </a>
+                            </td>
+                            <td class="d-none d-lg-table-cell">
+                                {{work.staff_id.first_name|title}} 
+                                {{work.staff_id.last_name|title}}
+                            </td>
+                            <td>{{work.job_id.name|truncatechars:25}}</td>
+                            <td>{{work.description|truncatechars:30}}</td>
+                            <td class="d-none d-lg-table-cell">{{work.start_datetime}}</td>
+                            <td class="d-none d-lg-table-cell">{{work.end_datetime}}</td>
+                            <td class="d-none d-lg-table-cell">{{work.get_total_time}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+<h6>There are no search results..</h6>
+{% endif %}
+
+{% endblock content %}

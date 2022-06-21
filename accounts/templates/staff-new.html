@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Create New Staff Member</h1>
+    </div>
+    <form method='post' novalidate>
+        {% csrf_token %}
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Personal Information</h6>
+                </div>
+                <div class="card-body">
+                    <p>
+                        {{form.first_name.label}}
+                        {{form.first_name}}
+                        <span class="text-danger">{{form.first_name.errors|striptags}}</span>
+                    </p>
+                    <p>
+                        {{form.last_name.label}}
+                        {{form.last_name}}
+                        <span class="text-danger">{{form.last_name.errors|striptags}}</span>
+                    </p>
+                    <p>
+                        {{form.email.label}}
+                        {{form.email}}
+                        <span class="text-danger">{{form.email.errors|striptags}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Group</h6>
+                </div>
+                <div class="card-body">
+                    <div class="ml-4">
+                        {% for group in form.groups %}
+                            <p>{{group}}</p>
+                        {% endfor %}
+                    </div>
+                <span class="text-danger ml-0">{{form.groups.errors|striptags}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Login Credentials</h6>
+                </div>
+                
+                <div class="card-body">
+                    <p>
+                        {{form.username.label}}
+                        {{form.username}}
+                        <span class="text-danger">{{form.username.errors|striptags}}</span>
+                    </p>
+                    <p>
+                        {{form.password1.label}}
+                        {{form.password1}}
+                        <span class="text-danger">{{form.password1.errors|striptags}}</span>
+                    </p>
+                    <p>
+                        {{form.password2.label}}
+                        {{form.password2}}
+                        <span class="text-danger">{{form.password2.errors|striptags}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card mb-4 py-3">
+            {{form.non_form_errors}}
+                <div class="card-body mx-auto d-sm-inline-block text-center">
+                    <a href="{% url 'staff-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                        <i class="fas fa-times fa-sm text-white-50"> </i> Cancel
+                    </a>
+                    <button type='submit' class="btn btn-md btn-primary shadow-sm m-1">
+                        <i class="fas fa-save fa-sm text-white-50"> </i> Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock content %}

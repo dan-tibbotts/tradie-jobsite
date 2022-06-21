@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load projects_tags %}
+
+
+{% block content %}
+<form method="POST" novalidate>
+    {% csrf_token %}
+    <div class="col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Are you sure you wish to delete this image?</h6>
+            </div>
+            <div class="card-body row mx-3">
+                <img class="tradie-images" src="{{image_object.image.url}}">
+            </div>
+
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="card mb-4 py-3">
+            <div class="card-body mx-auto d-sm-inline-block text-center m-1">
+                <a href="{% url 'work-edit' image_object.work_id.id %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                    <i class="fas fa-times fa-sm text-white-50"> </i> Cancel
+                </a>
+                <button type='submit' class="btn btn-md btn-danger shadow-sm m-1">
+                    <i class="fas fa-save fa-sm text-white-50"> </i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}

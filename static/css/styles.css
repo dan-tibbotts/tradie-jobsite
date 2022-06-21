@@ -1,0 +1,72 @@
+/* Remove marker from Staff List Item  */
+#id_staff li {
+    list-style-type: none;
+}
+
+/* Change the cell row background color */
+.bg-danger-row{
+    background-color: rgba(255, 0, 0, 0.05);
+}
+
+/* Change the cell row background color for completed items */
+.bg-completed-row{
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+
+.card-background-blue {
+    background-color: rgba(0, 0, 255, 0.01);
+}
+
+.errorlist, .errorlist li
+{
+    color: red;
+    list-style: None;
+    padding: 0;
+    margin: 0;
+}
+
+.tradie-images {
+    align-self: center;
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 330px;
+    max-width: 330px;
+    width: 100%;
+    margin: 5px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px #ccc;
+}
+
+.image-span {
+    position: relative;
+}
+
+
+.image-trash {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border-radius: 50%;
+    background-color: white;
+    padding: 6px;
+    border: solid 1px rgb(145, 145, 145);
+    z-index: 1;
+}
+
+.image-trash:hover {
+    color: red;
+}
+
+#image-modal {
+    max-width: 100%;
+    max-height: 100%;
+    justify-content: center;
+}
+
+
+#clicked-image {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}

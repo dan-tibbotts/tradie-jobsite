@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load accounts_tags %}
+{% load projects_tags %}
+
+{% block content %}
+{% get_projects_by_customer customer as customer_projects %}
+{% is_only_trade_staff user as only_trade_staff %}
+{% get_all_jobs_by_customer customer as customer_jobs %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><strong>Customer: </strong> {{customer.get_customer_name}}</h1>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-pills mb-4 border rounded bg-white p-2" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Customer Information</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="projects-tab" data-toggle="tab" href="#projects" role="tab" aria-controls="projects" aria-selected="false">Projects</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="jobs-tab" data-toggle="tab" href="#jobs" role="tab" aria-controls="jobs" aria-selected="false">Jobs</a>
+    </li>
+</ul>
+
+<!-- Start Tab -->
+<div class="tab-content" id="myTabContent">
+    <!-- Information tab -->
+    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Customer's Name and Company Name</h6>
+                </div>
+                <div class="card-body">
+                    <div class="card-body row py-0">
+                        <p class="col-lg-12 sm-12">
+                            <label for="company-name">Company Name</label>
+                            <input type="text" class="form-control" name="company-name" value="{{customer.company_name}}" disabled>
+                        </p>
+                        <p class="col-lg-12 sm-12">
+                            <label for="customer-name">Customer Name</label>
+                            <input type="text" class="form-control" name="customer-name" value="{{customer.first_name}} {{customer.last_name}}" disabled>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4 p-0">
+                <div class="card-header py-3">
+                    <h6  class="m-0 font-weight-bold text-primary">Contact Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="card-body row py-0">
+                        <p class="col-lg-12 sm-12">
+                            <label for="customer-phone">Customer Phone Number</label>
+                            <input type="text" class="form-control" name="customer-phone" value="{{customer.phone}}" disabled>
+                        </p>
+
+                        <p class="col-lg-12 sm-12">
+                            <label for="customer-email">Customer Email</label>
+                            <input type="text" class="form-control" name="customer-email" value="{{customer.email}}" disabled>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4 p-0">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Address</h6>
+                </div>
+                <div class="card-body">
+                    <div class="card-body row py-0">
+                        <p class="col-lg-12 sm-12">
+                            <label for="customer-address1">Address Line 1</label>
+                            <input type="text" class="form-control" name="customer-address1" value="{{customer.address_1}}" disabled>
+                        </p>
+                        {% if customer.address_2 %}
+                            <p class="col-lg-12 sm-12">
+                                <label for="customer-address2">Address Line 2</label>
+                                <input type="text" class="form-control" name="customer-address2" value="{{customer.address_2}}" disabled>
+                            </p>
+                        {% endif %}
+                        
+                        <p class="col-lg-12 sm-12">
+                            <label for="customer-city">City</label>
+                            <input type="text" class="form-control" name="customer-city" value="{{customer.city}}" disabled>
+                        </p>
+                        {% if customer.country %}
+                            <p class="col-lg-12 sm-12">
+                                <label for="customer-country">Country</label>
+                                <input type="text" class="form-control" name="customer-country" value="{{customer.country}}" disabled>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End informtion tab -->
+
+    <!-- Projects tab -->
+    <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
+        <!-- Customer Projects Data Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in customer_projects %}
+                        <tr>
+                            <td><strong><a href="{% url 'project-view' project.id %}">{{project.get_project_id}}:<strong> {{project.name}}</a></td>
+                            <td>{{project.get_status_display}}</td>
+                            <td>{{project.location}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- End Projects tab -->
+
+    <!-- Jobs tab -->
+    <div class="tab-pane fade" id="jobs" role="tabpanel" aria-labelledby="jobs-tab">
+        <!-- Customer Jobs Data Table -->
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Jobs</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Job</th>
+                            <th>Assigned Project</th>
+                            <th class="d-none d-lg-table-cell">Assigned Staff</th>
+                            <th class="d-none d-lg-table-cell">Start Date</th>
+                            <th class="d-none d-lg-table-cell">End Date</th>
+                            <th>Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for job in customer_jobs %}
+                        <tr class="{% if job.is_overdue %}
+                                        bg-danger-row
+                                    {% elif job.completed %}
+                                        bg-completed-row
+                                    {% endif %}">
+                                <td>
+                                <strong><a href="{% url 'job-view' job.id %}">{{job.name|default_if_none:""}}</a></strong>
+                                <p><small>{{job.description|truncatechars:50}}<small></p>
+                            </td>
+                            <td>
+                                <a href="{% url 'project-view' job.project_id.id %}">{{job.project_id.name}}</a>
+                                <p><small>{{job.project_id.customer_id.get_customer_name}}</small></p>
+                            </td>
+                            <td class="d-none d-lg-table-cell">
+                                {% for staff in job.staff_id.all %}
+                                    {% if forloop.last %}
+                                        <span>{{staff.first_name|title}} {{staff.last_name|title}}</span>
+                                    {% else %}
+                                        <span>{{staff.first_name|title}} {{staff.last_name|title}}, </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="d-none d-lg-table-cell">{{job.start_date|default_if_none:""}}</td>
+                            <td class="d-none d-lg-table-cell">{{job.end_date|default_if_none:""}}</td>
+                            <td>{{job.completed|yesno:"Yes,No"}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- End Jobs tab -->
+
+</div>
+
+
+
+<div class="col-lg-12 p-0">
+    <div class="card mb-4 py-3">
+        <div class="card-body mx-auto d-sm-inline-block text-center">
+            <a href="{% url 'customers-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                <i class="fas fa-users fa-sm text-white-50"> </i> View All Customers
+            </a>
+                <a href="{% url 'customer-edit' customer.id %}" class="btn btn-md btn-primary shadow-sm m-1">
+                    <i class="fas fa-user-edit fa-sm text-white-50"> </i> Edit Customer
+                </a>
+                <a href="{% url 'customer-delete' customer.id %}" class="btn btn-md btn-danger shadow-sm m-1">
+                    <i class="fas fa-trash fa-sm text-white-50"> </i> Delete Customer
+                </a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

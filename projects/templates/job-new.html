@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+<style>
+    #id_staff{
+        list-style-type: none;
+    }
+
+    .test{
+        background-color: blue;
+    }
+</style>
+
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Create New Job</h1>
+</div>
+<p>
+Here you can create a new job for a project.  A job represents the actual work to be completed.
+
+</p>
+<form method="POST" novalidate>
+    
+{% csrf_token %}
+ <div class="col-lg-12">
+    <div class="card mb-4 py-3">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Job/Project Information</h6>
+        </div>
+        <div class="card-body">
+            <p>
+                {{form.project_id.label}}
+                {{form.project_id}}
+                <span class="text-danger">{{form.project_id.errors|striptags}}</span>
+            </p>
+            <p>
+                {{form.name.label}}
+                {{form.name}}
+                <span class="text-danger">{{form.name.errors|striptags}}</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Description</h6>
+        </div>
+        <div class="card-body row">
+            <p class="col-lg-12 sm-12">
+                {{form.description}}
+                <span class="text-danger">{{form.description.errors|striptags}}</span>
+            </p>
+        </div>
+    </div>
+</div>
+ <div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Assigned Staff</h6>
+        </div>
+        <div class="card-body row">
+            {% for staff in form.staff_id %}
+                <p class="mx-5">{{staff}}</p>
+            {% endfor %}
+            {{form.staff_id.errors}}
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Scheduling Information</h6>
+        </div>
+        <div class="card-body row">
+            <p class="col-lg-6 sm-12">
+                {{form.start_date.label}}
+                {{form.start_date}}
+                <span class="text-danger">{{form.start_date.errors|striptags}}</span>
+            </p>
+            <p class="col-lg-6 sm-12">
+                {{form.end_date.label}}
+                {{form.end_date}}
+                <span class="text-danger">{{form.end_date.errors|striptags}}</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+ <div class="col-lg-12">
+    <div class="card mb-4 py-3">
+        <div class="card-body mx-auto d-sm-inline-block text-center">
+            <a href="{% url 'jobs-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                <i class="fas fa-times fa-sm text-white-50"> </i> Cancel
+            </a>
+            <button type='submit' class="btn btn-md btn-primary shadow-sm m-1">
+                <i class="fas fa-save fa-sm text-white-50"> </i> Save
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+{% endblock content %}

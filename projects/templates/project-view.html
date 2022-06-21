@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load accounts_tags %}
+{% load projects_tags %}
+
+{% block content %}
+{% is_only_trade_staff user as only_trade_staff %}
+{% get_all_jobs_by_project project as project_jobs%}
+{% get_project_images project as project_images %}
+{% get_work_by_project project as project_works %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <span class="h3 mb-0 text-gray-800"><strong>Project: </strong>{{project.get_project_id}}: {{project.name}}</span>
+    {% if project.status == "0" %}
+        <span class="h3 mr-3 text-success text-right"><strong>{{project.get_status_display}}</strong></span>
+    {% elif project.status == "2" %}
+        <span class="h3 mr-3 text-danger text-right"><strong>{{project.get_status_display}}</strong></span>
+    {% else %}
+        <span class="h3 mr-3 text-gray-800 text-right"><strong>{{project.get_status_display}}<strong></span>
+    {% endif %}
+</div>
+
+
+<!-- Project Tabs -->
+<ul class="nav nav-pills mb-4 border rounded bg-white p-2" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Project Information</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="jobs-tab" data-toggle="tab" href="#jobs" role="tab" aria-controls="jobs" aria-selected="false">Jobs</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="works-tab" data-toggle="tab" href="#works" role="tab" aria-controls="works" aria-selected="false">Works</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="photos-tab" data-toggle="tab" href="#photos" role="tab" aria-controls="photos" aria-selected="false">Photos</a>
+    </li>
+</ul>
+
+<!-- Start Tabs -->
+<div class="tab-content" id="myTabContent">
+
+    <!-- Project Information -->
+    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+        <div class="card mb-4 p-0">
+            <div class="card-header ">
+                <h6 class="m-0 font-weight-bold text-primary">Project Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="card-body row p-0">
+                    <p class="col-lg-3 sm-12 m-t-0">
+                        <label for="project-name">Project Number</label>
+                        <input type="text" class="form-control" name="project-name" value="{{project.get_project_id}}" disabled>
+                    </p>
+
+                    <p class="col-lg-12 sm-12">
+                        <label for="project-name">Project Name</label>
+                        <input type="text" class="form-control" name="project-name" value="{{project.name}}" disabled>
+                    </p>
+
+                    <p class="col-lg-12 sm-12">
+                        <label for="project-location">Project Location</label>
+                        <input type="text" class="form-control" name="project-location" value="{{project.location}}" disabled>
+                    </p>
+
+                    <p class="col-lg-3 sm-12">
+                        <label for="project-status">Project Status</label>
+                        {% if project.status == "0" %}
+                            <input type="text" class="form-control" name="project-status" value="Open" disabled>
+                        {% elif project.status == "1"  %}
+                            <input type="text" class="form-control" name="project-status" value="On Hold" disabled>
+                        {% else %}
+                            <input type="text" class="form-control" name="project-status" value="Closed" disabled>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Project Information -->
+
+    <!-- Jobs -->
+    <div class="tab-pane fade" id="jobs" role="tabpanel" aria-labelledby="jobs-tab">
+        <!-- Jobs Data Table -->
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Project Jobs</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Job</th>
+                            <th class="d-none d-md-table-cell">Assigned Staff</th>
+                            <th class="d-none d-md-table-cell">Start Date</th>
+                            <th class="d-none d-md-table-cell">End Date</th>
+                            <th class="text-center"><i class="fas fa-clipboard-check"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for job in project_jobs %}
+                        <tr class="{% if job.is_overdue %}
+                                        bg-danger-row
+                                    {% elif job.completed %}
+                                        bg-completed-row
+                                    {% endif %}">
+                                <td>
+                                <strong><a href="{% url 'job-view' job.id %}">{{job.name|default_if_none:""}}</a></strong>
+                                <p><small>{{job.description|truncatechars:50}}<small></p>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                {% for staff in job.staff_id.all %}
+                                    {% if forloop.last %}
+                                        <span>{{staff.first_name|title}} {{staff.last_name|title}}</span>
+                                    {% else %}
+                                        <span>{{staff.first_name|title}} {{staff.last_name|title}}, </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="d-none d-md-table-cell">{{job.start_date|default_if_none:""}}</td>
+                            <td class="d-none d-md-table-cell">{{job.end_date|default_if_none:""}}</td>
+                            <td class="text-center">{{job.completed|yesno:"Yes,No"}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- End Jobs -->
+
+    <!-- Works -->
+    <div class="tab-pane fade" id="works" role="tabpanel" aria-labelledby="works-tab">
+        <!-- Works Data Table -->
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Work Records</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>View</th>
+                            <th class="d-none d-md-table-cell">Staff Member</th>
+                            <th>Job</th>
+                            <th>Description of Works</th>
+                            <th class="d-none d-md-table-cell">Start Datetime</th>
+                            <th class="d-none d-md-table-cell">End Datetime</th>
+                            <th class="d-none d-md-table-cell">Total Time</th>
+                        </tr>
+                    </thead>    
+                    <tbody>
+                        {% for work in project_works %}
+                        <tr>
+                            <td class="text-center">
+                                <a href="{% url 'work-view' work.id %}" class="btn btn-sm btn-primary shadow-sm">
+                                    <i class="fas fa-eye fa-sm text-white-50"> </i>
+                                </a>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                {{work.staff_id.first_name|title}} 
+                                {{work.staff_id.last_name|title}}
+                            </td>
+                            <td>{{work.job_id.name|truncatechars:25}}</td>
+                            <td>{{work.description|truncatechars:30}}</td>
+                            <td class="d-none d-md-table-cell">{{work.start_datetime}}</td>
+                            <td class="d-none d-md-table-cell">{{work.end_datetime}}</td>
+                            <td class="d-none d-md-table-cell">{{work.get_total_time}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- End Works -->
+
+    <!-- Photos -->
+    <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
+        <!-- Images -->
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Attached Photographs</h6>
+            </div>
+            <div class="card-body row mx-2 justify-content-center">
+                {% if project_images %}
+                    {% for image in project_images %}
+                        <a href="" data-toggle="modal" onclick="imageClicked( `{{image.image.url}}` )" data-target="#imageModal"><img class="tradie-images" src="{{image.image.url}}"></a>
+                    {% endfor %}
+                {% else %}
+                    <p>No images have been uploaded for this project</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- End Photos -->
+
+</div>
+<!-- End Tabs -->
+
+
+<div class="card mb-4 p-0">
+    <div class="card-body mx-auto d-sm-inline-block text-center">
+        <a href="{% url 'projects-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+            <i class="fas fa-users fa-sm text-white-50"> </i> View All Projects
+        </a>
+            <a href="{% url 'project-edit' project.id %}" class="btn btn-md btn-primary shadow-sm m-1">
+                <i class="fas fa-user-edit fa-sm text-white-50"> </i> Edit Project
+            </a>
+            <a href="{% url 'project-delete' project.id %}" class="btn btn-md btn-danger shadow-sm m-1">
+                <i class="fas fa-trash fa-sm text-white-50"> </i> Delete Project
+            </a>
+    </div>
+</div>
+
+
+
+    
+
+
+
+
+
+
+{% endblock content %}

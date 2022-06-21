@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load projects_tags %}
+
+
+{% block content %}
+{% count_overdue_jobs as overdue_jobs %}
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">View All Jobs</h1>
+    </div>
+
+        <!-- Content Row -->
+        <div class="row">
+
+            <!-- Overdue Jobs -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                    Overdue Jobs</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{% count_overdue_jobs %}</div>
+                            </div>
+                            <div class="col-auto {% if overdue_jobs > 0 %}text-danger{% else %}text-gray-300{% endif %}" >
+                                <i class="fas fa-exclamation-triangle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uncomplete Jobs -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Uncompleted Jobs</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{% count_uncompleted_jobs %}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-people-carry fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Complete Jobs -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Completed Jobs</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{% count_completed_jobs %}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-check fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Jobs -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Total Jobs</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{% count_total_jobs %}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-newspaper fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    <!-- Jobs Data Table -->
+    <div class="card shadow mb-4 ">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Jobs</h6>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Job</th>
+                        <th class="d-none d-md-table-cell"><i class="fas fa-images"></i></th>
+                        <th>Assigned Project</th>
+                        <th class="d-none d-md-table-cell">Assigned Staff</th>
+                        <th class="d-none d-md-table-cell">Start Date</th>
+                        <th class="d-none d-md-table-cell">End Date</th>
+                        <th class="text-center"><i class="fas fa-clipboard-check"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for job in jobs %}
+                    <tr class="{% if job.is_overdue %}
+                                    bg-danger-row
+                                {% elif job.completed %}
+                                    bg-completed-row
+                                {% endif %}">
+                         <td>
+                            <strong><a href="{% url 'job-view' job.id %}">{{job.name|default_if_none:""}}</a></strong>
+                            <p><small>{{job.description|truncatechars:50}}<small></p>
+                        </td>
+                        <td class="text-center d-none d-md-table-cell">{% count_job_images job %}</td>
+                        <td>
+                            <a href="{% url 'project-view' job.project_id.id %}">{{job.project_id.name}}</a>
+                            <p><small>{{job.project_id.customer_id.get_customer_name}}</small></p>
+                        </td>
+                        <td class="d-none d-md-table-cell">
+                            {% for staff in job.staff_id.all %}
+                                {% if forloop.last %}
+                                    <span>{{staff.first_name|title}} {{staff.last_name|title}}</span>
+                                {% else %}
+                                    <span>{{staff.first_name|title}} {{staff.last_name|title}}, </span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td class="d-none d-md-table-cell">{{job.start_date|default_if_none:""}}</td>
+                        <td class="d-none d-md-table-cell">{{job.end_date|default_if_none:""}}</td>
+                        <td class="text-center">{{job.completed|yesno:"Yes,No"}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

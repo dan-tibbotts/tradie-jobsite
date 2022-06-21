@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load accounts_tags %}
+{% load projects_tags %}
+
+{% block content %}
+{% is_office_staff user as office_staff %}
+{% is_trade_staff user as trade_staff %}
+{% is_supervisor user as supervisor %}
+{% get_work_images work as work_images %}
+
+<form method="POST" novalidate enctype="multipart/form-data">
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><strong>Work Record: </strong> {{work.description}}</h1>
+</div>
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Staff Member</h6>
+        </div>
+        <div class="card-body row">
+            <p class="col-lg-12 sm-12">
+                <label for="staff">Staff Member</label>
+                <input type="text" class="form-control" id="" name="staff" value="{{work.staff_id.first_name}} {{work.staff_id.last_name}}" disabled>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Project/Job</h6>
+        </div>
+        <div class="card-body row">
+            <p class="col-lg-12 sm-12">
+                <label for="customer">Customer</label>
+                <input type="text" class="form-control" id="" name="customer" value="{{work.job_id.project_id.customer_id.get_customer_name}}" disabled>
+            </p>
+            <p class="col-lg-6 sm-12">
+                <label for="project">Project</label>
+                <input type="text" class="form-control" id="" name="project" value="{{work.job_id.project_id.name}}" disabled>
+            </p>
+
+            <p class="col-lg-6 sm-12">
+                <label for="project">Job</label>
+                <input type="text" class="form-control" id="" name="project" value="{{work.job_id.name}}" disabled>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Description of Works</h6>
+        </div>
+        <div class="card-body row">
+            <p class="col-lg-12 sm-12">
+                <label for="description">Description</label>
+                <textarea class="form-control" disabled>{{work.description}}</textarea>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Attached Photographs</h6>
+        </div>
+        <div class="card-body row mx-2 justify-content-center">
+            {% if work_images %}
+                {% for image in work_images %}
+                    <img class="tradie-images" src="{{image.image.url}}">
+                {% endfor %}
+            {% else %}
+                <p>No images have been uploaded for this work record</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4 py-3">
+        <div class="ml-4">
+            <h4>Date of Works</h4>
+        </div>
+        <div class="card-body row">
+            <p class="col-lg-6 sm-12">
+                <label for="start">Start Date</label>
+                <input type="text" class="form-control" id="" name="start" value="{{work.start_datetime}}" disabled>
+            </p>
+            <p class="col-lg-6 sm-12">
+                <label for="end">End Date</label>
+                <input type="text" class="form-control" id="" name="end" value="{{work.end_datetime}}" disabled>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4 py-3">
+        <div class="card-body mx-auto d-sm-inline-block text-center">
+            <a href="{% url 'works-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                <i class="fas fa-users fa-sm text-white-50"> </i> View All Work Records
+            </a>
+            <a href="{% url 'work-edit' work.id %}" class="btn btn-md btn-primary shadow-sm m-1">
+                <i class="fas fa-user-edit fa-sm text-white-50"> </i> Edit Work Record
+            </a>
+            <a href="{% url 'work-delete' work.id %}" class="btn btn-md btn-danger shadow-sm m-1">
+                <i class="fas fa-trash fa-sm text-white-50"> </i> Delete Work Record
+            </a>
+        </div>
+    </div>
+</div>
+</form>
+{% endblock content %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load projects_tags %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">View All Tasks</h1>
+</div>
+
+<!-- Content Row -->
+<div class="row">
+
+    <!-- Uncompleted Tasks -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Uncompleted Tasks</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% count_uncompleted_tasks %}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-times fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Tasks -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Completed Tasks</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% count_completed_tasks %}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Tasks -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Tasks</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{% count_total_tasks %}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-newspaper fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<!-- Task Data Table -->
+<div class="card shadow mb-4 ">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Tasks</h6>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Task Name</th>
+                    <th class="d-none d-md-table-cell">Project</th>
+                    <th>Job</th>
+                    <th>Completed Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td><strong><a href="{% url 'task-view' task.id %}">{{task.name}}</a><strong></td>
+                    <td class="d-none d-md-table-cell">{{task.job_id.project_id.name}}</td>
+                    <td>{{task.job_id.name}}</td>
+                    <td>{{task.completed_date}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

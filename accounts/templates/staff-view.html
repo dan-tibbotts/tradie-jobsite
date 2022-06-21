@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load accounts_tags %}
+{% load projects_tags %}
+
+{% block content %}
+{% is_only_trade_staff user as only_trade_staff %}
+{% is_office_staff user as office_staff %}
+{% get_all_user_jobs staff as staff_jobs %}
+{% get_work_by_staff_member staff as staff_works %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800"><strong>Staff:</strong> {{staff.first_name}} {{staff.last_name}}</h1>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-pills mb-4 border rounded bg-white p-2" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="personal-tab" data-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Staff Information</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="jobs-tab" data-toggle="tab" href="#jobs" role="tab" aria-controls="jobs" aria-selected="false">Jobs</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="works-tab" data-toggle="tab" href="#works" role="tab" aria-controls="works" aria-selected="false">Works</a>
+  </li>
+</ul>
+
+<!-- Start Tab -->
+<div class="tab-content" id="myTabContent">
+
+    <!-- Personal Information -->
+    <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Name and Email</h6>
+                </div>
+                <div class="card-body row">
+                    <p class="col-lg-6 sm-12">
+                        <label for="first-name">First Name</label>
+                        <input type="text" class="form-control" id="" name="first_name" value="{{staff.first_name}}" disabled>
+                    </p>
+                    <p class="col-lg-6 sm-12">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" class="form-control" id="" name="last_name" value="{{staff.last_name}}" disabled>
+                    </p>
+                    <p class="col-lg-12 sm-12">
+                        <label for="email">Email</label>
+                        <input type="text" class="form-control" id="" name="email" value="{{staff.email}}" disabled>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Assigned Groups</h6>
+                </div>
+                <div class="card-body">
+                    {{ staff.groups.all|join:', ' }}
+                </div>
+            </div>
+        </div>
+
+        {% if staff.username == user.username %}
+        <div class="col-lg-12 p-0">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Login Credentials</h6>
+                </div>
+                <div class="card-body">
+                    <p class="col-lg-12 sm-12">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="" name="username" value="{{staff.username}}" disabled>
+                    </p>
+                    <div class="text-center">
+                        <a href="{% url 'password_change' staff.id %}" class="btn btn-md btn-primary shadow-sm">
+                            <i class="fas fa-key fa-sm text-white-50"> </i> Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div> 
+    <!-- End Tab -->
+
+    <!-- Start Tab-->
+    <div class="tab-pane fade show" id="jobs" role="tabpanel" aria-labelledby="jobs-tab">
+        <!-- Staff Jobs Data Table -->
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Jobs</h6>
+            </div>
+            <div class="card-body">
+                <p>Displaying jobs allocated to <strong>{{staff.first_name}} {{staff.last_name}}</strong> </p><br>
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Job</th>
+                            <th>Project</th>
+                            <th class="d-none d-md-table-cell">Start Date</th>
+                            <th class="d-none d-md-table-cell">End Date</th>
+                            <th class="text-center"><i class="fas fa-clipboard-check"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for job in staff_jobs %}
+                        <tr class="{% if job.is_overdue %}
+                                        bg-danger-row
+                                    {% elif job.completed %}
+                                        bg-completed-row
+                                    {% endif %}">
+                            <td>
+                                <strong><a href="{% url 'job-view' job.id %}">{{job.name|default_if_none:""}}</a></strong>
+                                <p><small>{{job.description|truncatechars:50}}<small></p>
+                            </td>
+                            <td>
+                                <a href="{% url 'project-view' job.project_id.id %}">{{job.project_id.name}}</a>
+                                <p><small>{{job.project_id.customer_id.get_customer_name}}</small></p>
+                            </td>
+                            <td class="d-none d-md-table-cell">{{job.start_date|default_if_none:""}}</td>
+                            <td class="d-none d-md-table-cell">{{job.end_date|default_if_none:""}}</td>
+                            <td class="text-center">{{job.completed|yesno:"Yes,No"}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <!-- End Tab -->
+
+    <!-- Start Tab -->
+    <div class="tab-pane fade" id="works" role="tabpanel" aria-labelledby="works-tab">
+        <!-- Works Data Table -->
+        <div class="card shadow mb-4 ">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Work Records</h6>
+            </div>
+            <div class="card-body">
+            <p>Displaying work records for <strong>{{staff.first_name}} {{staff.last_name}}</strong> </p><br>
+                <table class="table table-bordered tradietable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>View</th>
+                            <th>Job</th>
+                            <th class="d-none d-md-table-cell">Description of Works</th>
+                            <th>Start Datetime</th>
+                            <th class="d-none d-md-table-cell">End Datetime</th>
+                            <th class="d-none d-md-table-cell">Total Time</th>
+                        </tr>
+                    </thead>    
+                    <tbody>
+                        {% for work in staff_works %}
+                        <tr>
+                            <td class="text-center">
+                                <a href="{% url 'work-view' work.id %}" class="btn btn-sm btn-primary shadow-sm">
+                                    <i class="fas fa-eye fa-sm text-white-50"> </i>
+                                </a>
+                            </td>
+                            <td>{{work.job_id.name|truncatechars:25}}</td>
+                            <td class="d-none d-md-table-cell">{{work.description|truncatechars:30}}</td>
+                            <td>{{work.start_datetime}}</td>
+                            <td class="d-none d-md-table-cell">{{work.end_datetime}}</td>
+                            <td class="d-none d-md-table-cell">{{work.get_total_time}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- End Tab -->
+</div>
+
+
+
+
+<div class="col-lg-12 p-0">
+    <div class="card mb-4 py-3">
+        <div class="card-body mx-auto d-sm-inline-block text-center">
+            <a href="{% url 'staff-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                <i class="fas fa-users fa-sm text-white-50"> </i> View All Staff
+            </a>
+
+            <a href="{% url 'staff-edit' staff.id %}" class="btn btn-md btn-primary shadow-sm m-1">
+                <i class="fas fa-user-edit fa-sm text-white-50"> </i> Edit Staff
+            </a>
+
+            <a href="{% url 'staff-delete' staff.id %}" class="btn btn-md btn-danger shadow-sm m-1">
+                <i class="fas fa-trash fa-sm text-white-50"> </i> Delete Staff
+            </a>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+{% endblock content %}

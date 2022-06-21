@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load accounts_tags %}
+
+{% block content %}
+{% is_trade_staff user as trade_staff %}
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><strong>Edit:</strong> {{staff.first_name}} {{staff.last_name}}</h1>
+    </div>
+
+    <form method="POST" novalidate>
+        {% csrf_token %}
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">Personal Information</h6>
+                </div>
+                <div class="card-body row">
+                    <p class="col-lg-6 sm-12">
+                        {{form.first_name.label}}
+                        {{form.first_name}}
+                        <span class="text-danger ml-0">{{form.first_name.errors|striptags}}</span>
+                    </p>
+                    <p class="col-lg-6 sm-12">
+                        {{form.last_name.label}}
+                        {{form.last_name}}
+                        <span class="text-danger ml-0">{{form.last_name.errors|striptags}}</span>
+                    </p>
+                    <p class="col-lg-12 sm-12">
+                        {{form.email.label}}
+                        {{form.email}}
+                        <span class="text-danger ml-0">{{form.email.errors|striptags}}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Assigned Groups</h6>
+                </div>
+                <div class="card-body">
+                    <div class="ml-4">
+                    {% if trade_staff %}
+                        {{ staff.groups.all|join:', ' }}
+                        <span hidden>
+                        {% for group in form.groups %}
+                            <p>{{group}}</p>
+                        {% endfor %}
+                        <span>
+                    {% else %}
+                        {% for group in form.groups %}
+                            <p>{{group}}</p>
+                        {% endfor %}
+                    {% endif %}
+                    </div>
+                    <span class="text-danger ml-0">{{form.groups.errors|striptags}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Login Credentials</h6>
+                </div>
+                <div class="card-body">
+                    <p class="col-lg-12 sm-12">
+                        {{form.username.label}}
+                        <input disabled type="text" class="form-control" id="id_username" name="id_username" value="{{staff.username}}">
+                        <span hidden>{{form.username}}</span>
+                    </p>
+                    <div class="text-center">
+                        <a href="{% url 'password_change' staff.id %}" class="btn btn-md btn-primary shadow-sm">
+                            <i class="fas fa-key fa-sm text-white-50"> </i> Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card mb-4 py-3">
+                <div class="card-body mx-auto d-sm-inline-block text-center">
+                    <a href="{% url 'staff-view' staff.id %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                        <i class="fas fa-times fa-sm text-white-50"> </i> Cancel
+                    </a>
+                    <button type='submit' class="btn btn-md btn-primary shadow-sm m-1">
+                        <i class="fas fa-save fa-sm text-white-50"> </i> Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock content %}

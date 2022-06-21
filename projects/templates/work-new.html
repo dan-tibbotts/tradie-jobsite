@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load projects_tags %}
+{% load accounts_tags %}
+
+{% block content %}
+{% get_open_projects as open_projects %}
+{% count_user_jobs user as staff_job_count  %}
+{% is_office_staff user as office_staff %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Create New Work Record</h1>
+</div>
+
+<form method="POST" novalidate enctype="multipart/form-data">
+{% csrf_token %}
+
+<span hidden>{{form.staff_id}}</span>
+
+ <div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Select the job</h6>
+        </div>
+        <div class="card-body">
+            {% if staff_job_count > 0 or office_staff %}
+                {{form.job_id}}
+                <span class="text-danger">{{form.job_id.errors|striptags}}</span>
+            {% else %}
+                <p>No jobs to select. You are not assigned to any jobs.<br><strong>Please ask an office staff member to allocated you to a job.</strong></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Describe the work you performed</h6>
+        </div>
+        <div class="card-body row">
+            <p class="col-lg-12">
+                {{form.description}}
+                <span class="text-danger">{{form.description.errors|striptags}}</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Upload Photographic Evidence</h6>
+        </div>
+        <div class="card-body row mx-3">
+            <input class="" type="file" name="images" accept="image/*" multiple>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Select the start and end date and time</h6>
+        </div>
+        <div class="card-body row">
+            <p class="col-lg-6 sm-12">
+                {{form.start_datetime.label}}
+                {{form.start_datetime}}
+                <span class="text-danger">{{form.start_datetime.errors|striptags}}</span>
+            </p>
+            <p class="col-lg-6 sm-12">
+                {{form.end_datetime.label}}
+                {{form.end_datetime}}
+                <span class="text-danger">{{form.end_datetime.errors|striptags}}</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+ <div class="col-lg-12">
+    <div class="card mb-4 py-3">
+        <div class="card-body mx-auto d-sm-inline-block text-center">
+            <a href="{% url 'works-all' %}" class="btn btn-md btn-secondary shadow-sm m-1">
+                <i class="fas fa-times fa-sm text-white-50"> </i> Cancel
+            </a>
+            <button type='submit' class="btn btn-md btn-primary shadow-sm m-1">
+                <i class="fas fa-save fa-sm text-white-50"> </i> Save
+            </button>
+        </div>
+    </div>
+</div>
+</form>
+
+
+
+{% endblock content %}
+
+
+
+
+
